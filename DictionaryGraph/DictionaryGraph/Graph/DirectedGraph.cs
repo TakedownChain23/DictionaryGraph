@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DictionaryGraph.Graph
+﻿namespace DictionaryGraph.Graph
 {
     internal class DirectedGraph
     {
-        public Dictionary<string, HashSet<string>> NodeConnections = [];
+        public Dictionary<string, OrderedSet<string>> NodeConnections = [];
 
-        HashSet<string> GetOrInitialiseConnections(string value)
+        OrderedSet<string> GetOrInitialiseConnections(string value)
         {
             if (NodeConnections.TryGetValue(value, out var connections)) return connections;
 
@@ -17,7 +13,7 @@ namespace DictionaryGraph.Graph
             return connections;
         }
 
-        public void AddNode(string value, HashSet<string> neighborValues)
+        public void AddNode(string value, OrderedSet<string> neighborValues)
         {
             var connections = GetOrInitialiseConnections(value);
             connections.AddRange(neighborValues);

@@ -22,17 +22,30 @@ namespace DictionaryGraph.Parser
                 var word = wordProperty.Name.ToLower().Trim();
                 var wordData = wordProperty.Value;
 
-                var meaningsElement = wordData.GetProperty("MEANINGS");
+                var definitionWords = new OrderedSet<string>();
 
-                var definitionWords = new HashSet<string>();
-
-                foreach (var meaningArray in meaningsElement.EnumerateArray())
+                var meaningsElementArray = wordData.GetProperty("MEANINGS").EnumerateArray();
+                if (meaningsElementArray.Any())
                 {
-                    var definition = meaningArray[1].GetString() ?? string.Empty;
-
-                    foreach (Match match in wordRegex.Matches(definition))
+                    foreach (var meaningArray in meaningsElementArray)
                     {
-                        definitionWords.Add(match.Value);
+                        var definition = meaningArray[1].GetString()?.ToLower().Trim() ?? string.Empty;
+                        foreach (Match match in wordRegex.Matches(definition))
+                        {
+                            definitionWords.Add(match.Value);
+                        }
+                    }
+                }
+                else
+                {
+                    var synonymnArray = wordData.GetProperty("SYNONYMS").EnumerateArray();
+                    foreach (var synonymElement in synonymnArray)
+                    {
+                        var synonym = synonymElement.GetString()?.ToLower().Trim() ?? string.Empty;
+                        foreach (Match match in wordRegex.Matches(synonym))
+                        {
+                            definitionWords.Add(match.Value);
+                        }
                     }
                 }
 
